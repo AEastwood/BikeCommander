@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\DataTypes\Component.cs" />
+    <Compile Include="Framework\DataTypes\Sensor.cs" />
     <Compile Include="MotorBike.Core\Alarm\Functions.cs" />
     <Compile Include="MotorBike.Core\CommandManager.cs" />
     <Compile Include="MotorBike.Core\CoreFunctions.cs" />

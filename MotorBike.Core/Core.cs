@@ -7,7 +7,7 @@ namespace BikeCommander.MotorBike.Core
 {
     class MotorBikeCore : MainConstructor
     {
-        private static Dash.MainDashboard mainDashboardForm = new Dash.MainDashboard();
+        private static readonly Dash.MainDashboard mainDashboardForm = new Dash.MainDashboard();
         public static bool ProcessCommands = false;
         public static void CoreStart()
         {
@@ -22,7 +22,7 @@ namespace BikeCommander.MotorBike.Core
         private static int EngineHealth = 0;
         private static SerialPort Arduino;
         private static string[] Ports;
-        private static bool ECUAuthGiven = false;
+        private static bool ECUAuthGiven = true;
         private static void StartUpProcedure()
         {
             Console.Title = "EastwoodMotorBikeCore.CORE_STATUS: OK";
@@ -61,8 +61,6 @@ namespace BikeCommander.MotorBike.Core
             else
             {
                 Console.WriteLine("System has failed health check");
-                Console.WriteLine(MotorBike.Core.Diagnostic.Electronics.Functions.ElectronicHealth);
-                Console.WriteLine(MotorBike.Core.Diagnostic.Engine.Functions.EngineCheck().ToString());
             }
 
             mainDashboardForm.Dispose();
@@ -74,11 +72,11 @@ namespace BikeCommander.MotorBike.Core
             Arduino.DtrEnable = true;
             Arduino.RtsEnable = true;
 
-            int Buffer = Arduino.BytesToRead;
-            byte[] ByteBuffer = new byte[Buffer];
+            int CommandBuffer = Arduino.BytesToRead;
+            byte[] CommandByteBuffer = new byte[CommandBuffer];
 
-            SerialCommand = Arduino.Read(ByteBuffer, 0, Buffer);
-            SerialCommand = Encoding.UTF8.GetString(ByteBuffer, 0, Buffer);
+            SerialCommand = Arduino.Read(CommandByteBuffer, 0, CommandBuffer);
+            SerialCommand = Encoding.UTF8.GetString(CommandByteBuffer, 0, CommandBuffer);
 
             MotorBike.Dash.MainDashboard.UpdateLabel("speedLabel", SerialCommand);
 
@@ -104,10 +102,9 @@ namespace BikeCommander.MotorBike.Core
         private static void ConnectToArduino(string Port)
         {
             Connected = true;
-            Arduino = new SerialPort(Ports[0], 9600, Parity.None, 8, StopBits.One);
+            Arduino = new SerialPort(Port, 9600, Parity.None, 8, StopBits.One);
             Arduino.DataReceived += new SerialDataReceivedEventHandler(ArduinoCommandHandler);
             Arduino.Open();
-            Arduino.Write("#STAR\n");
             Console.WriteLine(string.Format("Connected to: {0}", Ports[0]));
         }
 
@@ -121,19 +118,16 @@ namespace BikeCommander.MotorBike.Core
                     Thread.Sleep(1000);
                     Arduino.Write(string.Format("#TEXT{0}#\n", Message));
                 }
-                else
-                {
-                    Console.WriteLine(string.Format("Not Connected to: {0} Cannot send: {1}", Ports[0], Message));
-                }
             }
             catch (Exception)
             {
-                Connected = false;
-                Console.WriteLine("No connection!");
+                
             }
         }
 
+        #pragma warning disable IDE0044
         private static bool AllowEngineStart = false;
+        #pragma warning restore IDE0044
         private static void StartEngine()
         {
             if (Management.Engine.Functions.AllowTurnOver && AllowEngineStart)

@@ -6,6 +6,7 @@ namespace BikeCommander.MotorBike.Dash
 {
     public partial class MainDashboard : Form
     {
+        internal static MainDashboard mainDashboard = new MainDashboard();
         public MainDashboard()
         {
             InitializeComponent();
@@ -13,7 +14,6 @@ namespace BikeCommander.MotorBike.Dash
 
         private void MainDashboard_Load(object sender, System.EventArgs e)
         {
-            MainDashboard mainDashboard = new MainDashboard();
             MotorBike.Core.Diagnostic.Electronics.Functions.ElectronicHealth++;
 
             mainDashboard.Location = new Point(
@@ -29,7 +29,6 @@ namespace BikeCommander.MotorBike.Dash
 
         internal static void UpdateLabel(string label, string text)
         {
-            MainDashboard mainDashboard = new MainDashboard();
             var control = mainDashboard.Controls.OfType<Label>().FirstOrDefault(c => c.Name == label);
 
             if (control != null)

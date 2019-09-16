@@ -22,7 +22,7 @@ namespace BikeCommander.MotorBike.Core
         private static int EngineHealth = 0;
         private static SerialPort Arduino;
         private static string[] Ports;
-        private static bool ECUAuthGiven = true;
+        private static bool ECUAuthGiven = false;
         private static void StartUpProcedure()
         {
             Console.Title = "EastwoodMotorBikeCore.CORE_STATUS: OK";

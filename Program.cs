@@ -7,25 +7,16 @@ namespace BikeCommander
     {
         static void Main(string[] args)
         {
-
-            if (MotorBike.Core.Security.Authentication.KeyPresent(MotorBike.Core.Security.Authentication.AuthKey()))
+            try
             {
-                try
-                {
-                    Thread CommandThread = new Thread(() => MotorBike.Core.MotorBikeCore.CoreStart());
-                    CommandThread.Start();
-                }
-                catch (Exception)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unable to start motorcycle core");
-                    Console.ReadLine();
-                }
+                Thread CommandThread = new Thread(() => MotorBike.Core.MotorBikeCore.CoreStart());
+                CommandThread.Start();
             }
-            else
+            catch (Exception)
             {
-                Console.WriteLine("INVALID_KEY");
-                Console.Read();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Unable to start motorcycle core");
+                Console.ReadLine();
             }
 
         }

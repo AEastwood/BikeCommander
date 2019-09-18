@@ -7,7 +7,9 @@ namespace BikeCommander.MotorBike.Core
 {
     class MotorBikeCore : MainConstructor
     {
-        private static readonly Dash.MainDashboard mainDashboardForm = new Dash.MainDashboard();
+#pragma warning disable IDE0044
+        private static Dash.MainDashboard mainDashboardForm = new Dash.MainDashboard();
+#pragma warning restore IDE0044
         public static bool ProcessCommands = false;
         public static void CoreStart()
         {
@@ -19,13 +21,14 @@ namespace BikeCommander.MotorBike.Core
             }
         }
 
+        internal static string key;
         private static int EngineHealth = 0;
         private static SerialPort Arduino;
         private static string[] Ports;
         private static bool ECUAuthGiven = false;
         private static void StartUpProcedure()
         {
-            Console.Title = "EastwoodMotorBikeCore.CORE_STATUS: OK";
+            Console.Title = string.Format("EastwoodMotorBikeCore.CORE_STATUS: OK, Key: {0}", "");
             Console.WriteLine("Core Started Successfully!");
 
             Ports = AvailablePorts();
@@ -35,9 +38,18 @@ namespace BikeCommander.MotorBike.Core
                 ConnectToArduino(Ports[0]);
             }
 
+            while (!MotorBike.Core.Security.Authentication.keyPresent)
+            {
+                MotorBike.Core.Security.Authentication.CheckKey();
+                Thread.Sleep(250);
+            }
+
+            Console.WriteLine("sending authentication signal");
+
             while (!ECUAuthGiven)
             {
-                Thread.Sleep(250);
+                Arduino.Write(key);
+                Thread.Sleep(1000);
             }
 
             Console.WriteLine("ECU Requested Boot Process");
@@ -108,7 +120,7 @@ namespace BikeCommander.MotorBike.Core
             Console.WriteLine(string.Format("Connected to: {0}", Ports[0]));
         }
 
-        private static void SendMessage(string Message)
+        internal static void SendMessage(string Message)
         {
             try
             {
@@ -121,13 +133,13 @@ namespace BikeCommander.MotorBike.Core
             }
             catch (Exception)
             {
-                
+
             }
         }
 
-        #pragma warning disable IDE0044
+#pragma warning disable IDE0044
         private static bool AllowEngineStart = false;
-        #pragma warning restore IDE0044
+#pragma warning restore IDE0044
         private static void StartEngine()
         {
             if (Management.Engine.Functions.AllowTurnOver && AllowEngineStart)

@@ -7,9 +7,6 @@ namespace BikeCommander.MotorBike.Core
 {
     class MotorBikeCore : MainConstructor
     {
-#pragma warning disable IDE0044
-        private static Dash.MainDashboard mainDashboardForm = new Dash.MainDashboard();
-#pragma warning restore IDE0044
         public static bool ProcessCommands = false;
         public static void CoreStart()
         {
@@ -22,22 +19,39 @@ namespace BikeCommander.MotorBike.Core
         }
 
         internal static string key;
-        private static int EngineHealth = 0;
+        internal static int EngineHealth = 0;
         private static SerialPort Arduino;
         private static string[] Ports;
         private static bool ECUAuthGiven = false;
         private static void StartUpProcedure()
         {
-            Console.Title = string.Format("EastwoodMotorBikeCore.CORE_STATUS: OK, Key: {0}", "");
+            Console.Title = "EastwoodMotorBikeCore";
             Console.WriteLine("Core Started Successfully!");
-
             Ports = AvailablePorts();
 
-            if (Ports.Length > 0)
+            if (Ports.Length > 0 && !MotorBike.Core.MainConstructor.DefaultParams["DEBUG_MODE"])
             {
                 ConnectToArduino(Ports[0]);
+                Authenticate();
             }
 
+            EngineHealth += Diagnostic.Electronics.ElectronicDiagnostics.ElectronicCheck();
+            EngineHealth += Diagnostic.Engine.EngineDiagnostics.EngineCheck();
+         
+            if (EngineHealth == 2)
+            {
+                Management.Engine.EngineManagement.EngineStartPower();
+                Management.Engine.EngineManagement.AllowTurnOver = true;
+                SendMessage("  Ready 2 Ride   Systems are GO");
+            }
+            else
+            {
+                Console.WriteLine("System has failed health check");
+            }
+        }
+
+        private static void Authenticate()
+        {
             while (!MotorBike.Core.Security.Authentication.keyPresent)
             {
                 MotorBike.Core.Security.Authentication.CheckKey();
@@ -51,31 +65,7 @@ namespace BikeCommander.MotorBike.Core
                 Arduino.Write(key);
                 Thread.Sleep(1000);
             }
-
             Console.WriteLine("ECU Requested Boot Process");
-
-            SendMessage("Checking        Electronics");
-            EngineHealth += Diagnostic.Electronics.Functions.ElectronicCheck();
-            SendMessage("Electronics OK!");
-            Thread.Sleep(1000);
-
-            SendMessage("Checking Engine");
-            EngineHealth += Diagnostic.Engine.Functions.EngineCheck();
-            SendMessage("Engine OK!");
-            Thread.Sleep(1000);
-
-            if (EngineHealth == 2)
-            {
-                Management.Engine.Functions.EngineStartPower();
-                Management.Engine.Functions.AllowTurnOver = true;
-                SendMessage("  Ready 2 Ride   Systems are GO");
-            }
-            else
-            {
-                Console.WriteLine("System has failed health check");
-            }
-
-            mainDashboardForm.Dispose();
         }
 
         private static dynamic SerialCommand = null;
@@ -89,8 +79,6 @@ namespace BikeCommander.MotorBike.Core
 
             SerialCommand = Arduino.Read(CommandByteBuffer, 0, CommandBuffer);
             SerialCommand = Encoding.UTF8.GetString(CommandByteBuffer, 0, CommandBuffer);
-
-            MotorBike.Dash.MainDashboard.UpdateLabel("speedLabel", SerialCommand);
 
             switch (SerialCommand)
             {
@@ -142,9 +130,9 @@ namespace BikeCommander.MotorBike.Core
 #pragma warning restore IDE0044
         private static void StartEngine()
         {
-            if (Management.Engine.Functions.AllowTurnOver && AllowEngineStart)
+            if (Management.Engine.EngineManagement.AllowTurnOver && AllowEngineStart)
             {
-                Management.Engine.Functions.StartEngine();
+                Management.Engine.EngineManagement.StartEngine();
             }
         }
     }

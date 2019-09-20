@@ -2,7 +2,7 @@
 
 namespace BikeCommander.MotorBike.Core.Management.Engine
 {
-    class Functions
+    class EngineManagement
     {
 
         internal static bool AllowTurnOver = false;

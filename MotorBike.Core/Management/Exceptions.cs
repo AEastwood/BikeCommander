@@ -2,6 +2,7 @@
 
 namespace BikeCommander.MotorBike.Core.Management
 {
+    [Serializable]
     class EngineNoPowerException : Exception
     {
         public EngineNoPowerException()

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace BikeCommander.MotorBike.Core.Management.Engine
 {
@@ -6,14 +8,18 @@ namespace BikeCommander.MotorBike.Core.Management.Engine
     {
 
         internal static int SelectedPowerMode = Core.MainConstructor.CoreParams["BikeSelectedPowerMode"];
+        private static bool BeastModeSelected = false;
         internal static object PowerModeSelector(int PowerMode = 2)
         {
+            SelectedPowerMode = PowerMode;
             Dash.MainDashboard mainDashboard = new Dash.MainDashboard();
 
-            if (!Core.Management.Engine.Functions.Warm && PowerMode == 4)
+            if (!Core.Management.Engine.EngineManagement.Warm && PowerMode == 4)
             {
+                BeastModeSelected = true;
                 PowerMode = 1;
-                mainDashboard.speedLabel.Text = "not available";
+                Thread AwaitBeastMode = new Thread(() => AwaitBeastModeThread());
+                AwaitBeastMode.Start();
             }
 
             Dictionary<string, dynamic> BeastMode = new Dictionary<string, dynamic>()
@@ -23,7 +29,7 @@ namespace BikeCommander.MotorBike.Core.Management.Engine
                 {"MaxHP", 200 },
                 {"TCS", true },
                 {"AWC", true },
-                {"EV", 1 }
+                {"EV", 60.0f }
             };
 
             Dictionary<string, dynamic> PowerMode1 = new Dictionary<string, dynamic>()
@@ -71,9 +77,25 @@ namespace BikeCommander.MotorBike.Core.Management.Engine
                 case 4:
                     return BeastMode;
 
+
                 default:
                     return PowerMode2;
             }
+        }
+
+        private static void AwaitBeastModeThread()
+        {
+            while (BeastModeSelected)
+            {
+                if (Core.Management.Engine.EngineManagement.Warm && BeastModeSelected)
+                {
+                    SelectedPowerMode = 4;
+                    MotorBike.Core.Management.Exhaust.ExhaustFunctions.ExhaustPositionModify(60.0f);
+                }
+                Thread.Sleep(500);
+            }
+
+            Thread.CurrentThread.Abort();
         }
     }
 }

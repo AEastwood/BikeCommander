@@ -28,27 +28,39 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.speedLabel = new System.Windows.Forms.Label();
+            this.revCounter1 = new BikeCommander.Framework.Controls.RevCounter();
             this.SuspendLayout();
             // 
-            // speedLabel
+            // revCounter1
             // 
-            this.speedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.speedLabel.Location = new System.Drawing.Point(628, 365);
-            this.speedLabel.Name = "speedLabel";
-            this.speedLabel.Size = new System.Drawing.Size(144, 67);
-            this.speedLabel.TabIndex = 0;
-            this.speedLabel.Text = "Speed";
-            this.speedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.revCounter1.BackColor = System.Drawing.SystemColors.Control;
+            this.revCounter1.BarColor1 = System.Drawing.Color.Orange;
+            this.revCounter1.BarColor2 = System.Drawing.Color.Orange;
+            this.revCounter1.BarWidth = 14F;
+            this.revCounter1.Font = new System.Drawing.Font("Segoe UI", 15F);
+            this.revCounter1.ForeColor = System.Drawing.Color.DimGray;
+            this.revCounter1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.ForwardDiagonal;
+            this.revCounter1.LineColor = System.Drawing.Color.DimGray;
+            this.revCounter1.LineWidth = 1;
+            this.revCounter1.Location = new System.Drawing.Point(358, 12);
+            this.revCounter1.Maximum = ((long)(100));
+            this.revCounter1.MinimumSize = new System.Drawing.Size(100, 100);
+            this.revCounter1.Name = "revCounter1";
+            this.revCounter1.ProgressShape = BikeCommander.Framework.Controls.RevCounter.ProgessShape.Flat;
+            this.revCounter1.Size = new System.Drawing.Size(417, 417);
+            this.revCounter1.TabIndex = 0;
+            this.revCounter1.Text = null;
+            this.revCounter1.TextMode = BikeCommander.Framework.Controls.RevCounter.Textmode.Percentage;
+            this.revCounter1.Value = ((long)(57));
             // 
             // MainDashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.SkyBlue;
+            this.BackColor = System.Drawing.SystemColors.WindowFrame;
             this.ClientSize = new System.Drawing.Size(784, 441);
-            this.Controls.Add(this.speedLabel);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Controls.Add(this.revCounter1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainDashboard";
@@ -61,6 +73,6 @@
 
         #endregion
 
-        internal System.Windows.Forms.Label speedLabel;
+        private Framework.Controls.RevCounter revCounter1;
     }
 }

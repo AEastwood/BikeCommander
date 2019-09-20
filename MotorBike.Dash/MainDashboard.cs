@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,27 +15,26 @@ namespace BikeCommander.MotorBike.Dash
 
         private void MainDashboard_Load(object sender, System.EventArgs e)
         {
-            MotorBike.Core.Diagnostic.Electronics.Functions.ElectronicHealth++;
+            MotorBike.Core.Diagnostic.Electronics.ElectronicDiagnostics.ElectronicHealth++;
 
             mainDashboard.Location = new Point(
-                DashboardConstructor.DashboardParams["LOCATION_X"], 
+                DashboardConstructor.DashboardParams["LOCATION_X"],
                 DashboardConstructor.DashboardParams["LOCATION_X"]
             );
+
+            DashboardSetup();
+        }
+
+        private delegate void BackColorInvoke(Color color);
+        private void DashboardSetup()
+        {
+            this.revCounter1.Value = 88;
         }
 
         private void MainDashboard_FormClosed(object sender, FormClosedEventArgs e)
         {
             MotorBike.Core.CoreFunctions.ConsoleUpdate("dashboard closed");
         }
-
-        internal static void UpdateLabel(string label, string text)
-        {
-            var control = mainDashboard.Controls.OfType<Label>().FirstOrDefault(c => c.Name == label);
-
-            if (control != null)
-            {
-                control.Text = text;
-            }
-        }
+        
     }
 }

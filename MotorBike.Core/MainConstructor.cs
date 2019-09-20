@@ -10,6 +10,7 @@ namespace BikeCommander.MotorBike.Core
         public static Dictionary<string, dynamic> CoreParams = new Dictionary<string, dynamic>()
         {
             { "AuthKey", MotorBike.Core.Security.Authentication.AuthKey() },
+            { "AuthKeyLocation", @"D:\ebr2r\key.eb" },
             { "BikeName", "EastwoodMotorBikeCore" },
             { "BikeVersion", Assembly.GetEntryAssembly().GetName().Version },
             { "BikeRegistration", "PN17 VAO" },
@@ -21,6 +22,7 @@ namespace BikeCommander.MotorBike.Core
         public static readonly Dictionary<string, bool> DefaultParams = new Dictionary<string, bool>()
         {
             { "AUTH_OVERRIDE", false },
+            { "DEBUG_MODE", true },
             { "PROCESS_COMMANDS", true },
             { "GPS_ENABLED", true }
         };

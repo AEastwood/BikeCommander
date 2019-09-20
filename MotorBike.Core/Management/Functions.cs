@@ -2,7 +2,7 @@
 
 namespace BikeCommander.MotorBike.Core.Management
 {
-    class Functions
+    class ManagementFunctions
     {
 
         #region ABS_MANAGER

@@ -45,6 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\Controls\RevCounter.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Framework\DataTypes\Component.cs" />
     <Compile Include="Framework\DataTypes\Sensor.cs" />
     <Compile Include="MotorBike.Core\Alarm\Functions.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="MotorBike.Core\Management\Engine\Functions.cs" />
     <Compile Include="MotorBike.Core\Management\Engine\PowerModes.cs" />
     <Compile Include="MotorBike.Core\Management\Exceptions.cs" />
+    <Compile Include="MotorBike.Core\Management\Exhaust\Functions.cs" />
     <Compile Include="MotorBike.Core\Management\Functions.cs" />
     <Compile Include="MotorBike.Core\Management\Sensors\Temperature.cs" />
     <Compile Include="MotorBike.Core\Security\Authentication.cs" />

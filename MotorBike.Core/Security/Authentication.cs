@@ -9,7 +9,9 @@ namespace BikeCommander.MotorBike.Core.Security
     class Authentication
     {
 
-        private static string bikePath = @"D:\ebr2r\key.eb";
+#pragma warning disable IDE0044
+        private static string bikePath = MotorBike.Core.MainConstructor.CoreParams["AuthKeyLocation"];
+#pragma warning restore IDE0044
         private static string bikeSecret;
         internal static bool keyPresent;
         internal static string AuthKey()
@@ -30,7 +32,6 @@ namespace BikeCommander.MotorBike.Core.Security
 
         private const int Keysize = 256;
         private const int DerivationIterations = 1000;
-
         public static bool Decrypt(string securityChallenge, string bikeSecret)
         {
             try
@@ -61,7 +62,7 @@ namespace BikeCommander.MotorBike.Core.Security
                                     keyPresent = true;
                                     MotorBike.Core.MotorBikeCore.SendMessage(" Eastwood Bikes   Key Accepted");
                                     MotorBike.Core.MotorBikeCore.key = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-                                    return true;
+                                    keyPresent = true;
                                 }
                             }
 
@@ -72,8 +73,10 @@ namespace BikeCommander.MotorBike.Core.Security
             catch (Exception)
             {
                 MotorBike.Core.MotorBikeCore.SendMessage(" Eastwood Bikes   Invalid Key!");
-                return false;
+                keyPresent = false;
             }
+
+            return keyPresent;
         }
         public static bool KeyPresent()
         {

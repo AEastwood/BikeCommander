@@ -1,8 +1,8 @@
 ﻿namespace BikeCommander.MotorBike.Core.Alarm
 {
-    class Functions
+    class AlarmFunctions
     {
-
+        internal static bool AlarmActivated = true;
         public static bool Activate()
         {
 

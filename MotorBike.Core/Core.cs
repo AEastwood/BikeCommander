@@ -10,8 +10,9 @@ namespace BikeCommander.MotorBike.Core
         public static bool ProcessCommands = false;
         public static void CoreStart()
         {
+            
             StartUpProcedure();
-            while (DefaultParams["PROCESS_COMMANDS"])
+            while (MotorBike.Core.MainConstructor.DefaultParams["PROCESS_COMMANDS"])
             {
                 CommandManager.ProcessCommand(null);
                 Thread.Sleep(25);
@@ -28,7 +29,7 @@ namespace BikeCommander.MotorBike.Core
             Console.Title = "EastwoodMotorBikeCore";
             Console.WriteLine("Core Started Successfully!");
             Ports = AvailablePorts();
-
+            
             if (Ports.Length > 0 && !MotorBike.Core.MainConstructor.DefaultParams["DEBUG_MODE"])
             {
                 ConnectToArduino(Ports[0]);
@@ -105,7 +106,7 @@ namespace BikeCommander.MotorBike.Core
             Arduino = new SerialPort(Port, 9600, Parity.None, 8, StopBits.One);
             Arduino.DataReceived += new SerialDataReceivedEventHandler(ArduinoCommandHandler);
             Arduino.Open();
-            Console.WriteLine(string.Format("Connected to: {0}", Ports[0]));
+            Console.WriteLine(string.Format("Connected to: {0}", Port));
         }
 
         internal static void SendMessage(string Message)

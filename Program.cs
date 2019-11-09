@@ -5,7 +5,6 @@ namespace BikeCommander
 {
     class Program
     {
-        [STAThread]
         static void Main(string[] args)
         {
             try

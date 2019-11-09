@@ -50,9 +50,8 @@ namespace BikeCommander.MotorBike.Core.Management.Engine
                 {"TCS", true },
                 {"AWC", true },
                 {"EV", 0 }
-
             };
-
+            
             Dictionary<string, dynamic> PowerMode3 = new Dictionary<string, dynamic>()
             {
                 {"MaxThrottle", 80 },

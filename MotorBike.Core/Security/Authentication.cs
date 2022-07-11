@@ -8,18 +8,13 @@ namespace BikeCommander.MotorBike.Core.Security
 {
     class Authentication
     {
-
-#pragma warning disable IDE0044
-        private static string bikePath = MotorBike.Core.MainConstructor.CoreParams["AuthKeyLocation"];
-#pragma warning restore IDE0044
+        public static string bikePath = null;
         private static string bikeSecret;
         internal static bool keyPresent;
         internal static string AuthKey()
         {
             if (!File.Exists(bikePath))
-            {
                 return null;
-            }
 
             bikeSecret = File.ReadAllText(bikePath);
             return bikeSecret;
@@ -49,6 +44,7 @@ namespace BikeCommander.MotorBike.Core.Security
                         symmetricKey.BlockSize = 256;
                         symmetricKey.Mode = CipherMode.CBC;
                         symmetricKey.Padding = PaddingMode.PKCS7;
+                        
                         using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
                         {
                             using (var memoryStream = new MemoryStream(cipherTextBytes))
@@ -78,15 +74,6 @@ namespace BikeCommander.MotorBike.Core.Security
 
             return keyPresent;
         }
-        public static bool KeyPresent()
-        {
-
-            if (Decrypt(MotorBike.Core.MainConstructor.CoreParams["BikeSecret"], AuthKey()) && AuthKey() != null)
-            {
-                return true;
-            }
-
-            return false;
-        }
+        public static bool KeyPresent() => (Decrypt(MotorBike.Core.MainConstructor.CoreParams["BikeSecret"], AuthKey()) && AuthKey() != null);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BikeCommander.MotorBike.Core.Security;
+using System;
 using System.IO.Ports;
 using System.Text;
 using System.Threading;
@@ -53,6 +54,8 @@ namespace BikeCommander.MotorBike.Core
 
         private static void Authenticate()
         {
+            Authentication.bikePath = MotorBike.Core.MainConstructor.CoreParams["AuthKeyLocation"];
+            
             while (!MotorBike.Core.Security.Authentication.keyPresent)
             {
                 MotorBike.Core.Security.Authentication.CheckKey();
@@ -102,10 +105,12 @@ namespace BikeCommander.MotorBike.Core
         private static bool Connected = false;
         private static void ConnectToArduino(string Port)
         {
-            Connected = true;
             Arduino = new SerialPort(Port, 9600, Parity.None, 8, StopBits.One);
             Arduino.DataReceived += new SerialDataReceivedEventHandler(ArduinoCommandHandler);
             Arduino.Open();
+
+            Connected = true;
+
             Console.WriteLine(string.Format("Connected to: {0}", Port));
         }
 
@@ -126,15 +131,11 @@ namespace BikeCommander.MotorBike.Core
             }
         }
 
-#pragma warning disable IDE0044
         private static bool AllowEngineStart = false;
-#pragma warning restore IDE0044
         private static void StartEngine()
         {
             if (Management.Engine.EngineManagement.AllowTurnOver && AllowEngineStart)
-            {
                 Management.Engine.EngineManagement.StartEngine();
-            }
         }
     }
 }

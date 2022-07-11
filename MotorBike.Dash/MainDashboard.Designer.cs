@@ -42,12 +42,13 @@
             this.revCounter1.GradientMode = System.Drawing.Drawing2D.LinearGradientMode.ForwardDiagonal;
             this.revCounter1.LineColor = System.Drawing.Color.DimGray;
             this.revCounter1.LineWidth = 1;
-            this.revCounter1.Location = new System.Drawing.Point(586, 12);
+            this.revCounter1.Location = new System.Drawing.Point(877, 14);
+            this.revCounter1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.revCounter1.Maximum = ((long)(100));
-            this.revCounter1.MinimumSize = new System.Drawing.Size(100, 100);
+            this.revCounter1.MinimumSize = new System.Drawing.Size(150, 154);
             this.revCounter1.Name = "revCounter1";
             this.revCounter1.ProgressShape = BikeCommander.Framework.Controls.RevCounter.ProgessShape.Flat;
-            this.revCounter1.Size = new System.Drawing.Size(186, 186);
+            this.revCounter1.Size = new System.Drawing.Size(286, 286);
             this.revCounter1.TabIndex = 0;
             this.revCounter1.Text = null;
             this.revCounter1.TextMode = BikeCommander.Framework.Controls.RevCounter.Textmode.Percentage;
@@ -55,12 +56,13 @@
             // 
             // MainDashboard
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.WindowFrame;
-            this.ClientSize = new System.Drawing.Size(784, 441);
+            this.ClientSize = new System.Drawing.Size(1176, 678);
             this.Controls.Add(this.revCounter1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainDashboard";

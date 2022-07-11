@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace BikeCommander.MotorBike.Core
 {
     class MainConstructor
     {
+        // Core Params
         internal readonly static Dictionary<string, dynamic> CoreParams = new Dictionary<string, dynamic>()
         {
             { "AuthKey", MotorBike.Core.Security.Authentication.AuthKey() },
@@ -17,13 +19,16 @@ namespace BikeCommander.MotorBike.Core
             { "BikeVIN", null }
         };
 
+        // Default Params
         internal readonly static Dictionary<string, bool> DefaultParams = new Dictionary<string, bool>()
         {
-            { "AUTH_OVERRIDE", false },
-            { "DEBUG_MODE", true },
+            { "AUTH_OVERRIDE", FileExistsInBaseDir("auth.eb") },
+            { "DEBUG_MODE", FileExistsInBaseDir("debug.eb") },
             { "PROCESS_COMMANDS", true },
             { "GPS_ENABLED", true }
         };
 
+
+        private static bool FileExistsInBaseDir(string filename) => File.Exists(Assembly.GetEntryAssembly().Location.Replace("BikeCommand.exe", filename));
     }
 }

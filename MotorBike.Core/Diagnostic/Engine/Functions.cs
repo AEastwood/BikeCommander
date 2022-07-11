@@ -8,13 +8,13 @@ namespace BikeCommander.MotorBike.Core.Diagnostic.Engine
 {
     class EngineDiagnostics
     {
-
+        internal static int EngineHealth = 0;
         internal static int EngineCheck()
         {
             MotorBike.Core.MotorBikeCore.SendMessage("Checking Engine");
             MotorBike.Core.MotorBikeCore.SendMessage("Engine OK!");
 
-            return 1;
+            return EngineHealth++;
         }
 
     }

@@ -10,23 +10,18 @@ namespace BikeCommander.MotorBike.Core.Security
     {
         public static string bikePath = null;
         private static string bikeSecret;
+        private const int DerivationIterations = 1000;
         internal static bool keyPresent;
+        private const int Keysize = 256;
+
+
         internal static string AuthKey()
         {
-            if (!File.Exists(bikePath))
-                return null;
+            if (!File.Exists(bikePath)) return null;
 
-            bikeSecret = File.ReadAllText(bikePath);
-            return bikeSecret;
+            return File.ReadAllText(bikePath);
         }
 
-        internal static void CheckKey()
-        {
-            KeyPresent();
-        }
-
-        private const int Keysize = 256;
-        private const int DerivationIterations = 1000;
         public static bool Decrypt(string securityChallenge, string bikeSecret)
         {
             try
@@ -44,7 +39,7 @@ namespace BikeCommander.MotorBike.Core.Security
                         symmetricKey.BlockSize = 256;
                         symmetricKey.Mode = CipherMode.CBC;
                         symmetricKey.Padding = PaddingMode.PKCS7;
-                        
+
                         using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
                         {
                             using (var memoryStream = new MemoryStream(cipherTextBytes))
@@ -53,9 +48,10 @@ namespace BikeCommander.MotorBike.Core.Security
                                 {
                                     var plainTextBytes = new byte[cipherTextBytes.Length];
                                     var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+                                    
                                     memoryStream.Close();
                                     cryptoStream.Close();
-                                    keyPresent = true;
+
                                     MotorBike.Core.MotorBikeCore.SendMessage(" Eastwood Bikes   Key Accepted");
                                     MotorBike.Core.MotorBikeCore.key = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
                                     keyPresent = true;

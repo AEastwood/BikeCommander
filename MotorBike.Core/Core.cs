@@ -1,6 +1,7 @@
 ﻿using BikeCommander.MotorBike.Core.Security;
 using System;
 using System.IO.Ports;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -8,57 +9,25 @@ namespace BikeCommander.MotorBike.Core
 {
     class MotorBikeCore : MainConstructor
     {
-        public static bool ProcessCommands = false;
-        public static void CoreStart()
-        {
-            
-            StartUpProcedure();
-            while (MotorBike.Core.MainConstructor.DefaultParams["PROCESS_COMMANDS"])
-            {
-                CommandManager.ProcessCommand(null);
-                Thread.Sleep(25);
-            }
-        }
-
-        internal static string key;
-        internal static int EngineHealth = 0;
+        private static bool AllowEngineStart = false;
         private static SerialPort Arduino;
-        private static string[] Ports;
+        private static bool Connected = false;
         private static bool ECUAuthGiven = false;
-        private static void StartUpProcedure()
-        {
-            Console.Title = "EastwoodMotorBikeCore";
-            Console.WriteLine("Core Started Successfully!");
-            Ports = AvailablePorts();
-            
-            if (Ports.Length > 0 && !MotorBike.Core.MainConstructor.DefaultParams["DEBUG_MODE"])
-            {
-                ConnectToArduino(Ports[0]);
-                Authenticate();
-            }
-
-            EngineHealth += Diagnostic.Electronics.ElectronicDiagnostics.ElectronicCheck();
-            EngineHealth += Diagnostic.Engine.EngineDiagnostics.EngineCheck();
-         
-            if (EngineHealth == 2)
-            {
-                Management.Engine.EngineManagement.EngineStartPower();
-                Management.Engine.EngineManagement.AllowTurnOver = true;
-                SendMessage("  Ready 2 Ride   Systems are GO");
-            }
-            else
-            {
-                Console.WriteLine("System has failed health check");
-            }
-        }
+        internal static int EngineHealth = 0;
+        internal static string key;
+        private static string[] Ports;
+        public static bool ProcessCommands = false;
+        private static dynamic SerialCommand = null;
 
         private static void Authenticate()
         {
             Authentication.bikePath = MotorBike.Core.MainConstructor.CoreParams["AuthKeyLocation"];
-            
+
+            Console.WriteLine("Authenticating with key..");
+
             while (!MotorBike.Core.Security.Authentication.keyPresent)
             {
-                MotorBike.Core.Security.Authentication.CheckKey();
+                MotorBike.Core.Security.Authentication.KeyPresent();
                 Thread.Sleep(250);
             }
 
@@ -69,10 +38,10 @@ namespace BikeCommander.MotorBike.Core
                 Arduino.Write(key);
                 Thread.Sleep(1000);
             }
+
             Console.WriteLine("ECU Requested Boot Process");
         }
 
-        private static dynamic SerialCommand = null;
         private static void ArduinoCommandHandler(object sender, SerialDataReceivedEventArgs e)
         {
             Arduino.DtrEnable = true;
@@ -96,13 +65,8 @@ namespace BikeCommander.MotorBike.Core
             }
         }
 
-        private static string[] AvailablePorts()
-        {
-            Ports = SerialPort.GetPortNames();
-            return Ports;
-        }
+        private static string[] AvailablePorts() => SerialPort.GetPortNames();
 
-        private static bool Connected = false;
         private static void ConnectToArduino(string Port)
         {
             Arduino = new SerialPort(Port, 9600, Parity.None, 8, StopBits.One);
@@ -112,6 +76,24 @@ namespace BikeCommander.MotorBike.Core
             Connected = true;
 
             Console.WriteLine(string.Format("Connected to: {0}", Port));
+        }
+
+        public static void CoreStart()
+        {
+            Console.WriteLine(Assembly.GetEntryAssembly().Location + "\\debug.eb");
+            
+            if (MotorBike.Core.MainConstructor.DefaultParams["DEBUG_MODE"])
+                Console.WriteLine("DEBUG MODE ENABLED!!!");
+
+            StartUpProcedure();
+
+            Console.WriteLine("Awaiting Commands..");
+
+            while (MotorBike.Core.MainConstructor.DefaultParams["PROCESS_COMMANDS"])
+            {
+                CommandManager.ProcessCommand(null);
+                Thread.Sleep(25);
+            }
         }
 
         internal static void SendMessage(string Message)
@@ -131,11 +113,38 @@ namespace BikeCommander.MotorBike.Core
             }
         }
 
-        private static bool AllowEngineStart = false;
         private static void StartEngine()
         {
             if (Management.Engine.EngineManagement.AllowTurnOver && AllowEngineStart)
                 Management.Engine.EngineManagement.StartEngine();
+        }
+
+        private static void StartUpProcedure()
+        {
+            Console.Title = "EastwoodMotorBikeCore";
+            Console.WriteLine("Core Started Successfully!");
+
+            Ports = AvailablePorts();
+
+            if (Ports.Length > 0 && !MotorBike.Core.MainConstructor.DefaultParams["DEBUG_MODE"])
+            {
+                ConnectToArduino(Ports[0]);
+                
+                if(!MotorBike.Core.MainConstructor.DefaultParams["AUTH_OVERRIDE"]) Authenticate();
+            }
+
+            EngineHealth += Diagnostic.Electronics.ElectronicDiagnostics.ElectronicCheck();
+            EngineHealth += Diagnostic.Engine.EngineDiagnostics.EngineCheck();
+
+            if (EngineHealth < 2)
+            {
+                Console.WriteLine("System has failed health check");
+                return;
+            }
+
+            Management.Engine.EngineManagement.EngineStartPower();
+            Management.Engine.EngineManagement.AllowTurnOver = true;
+            SendMessage("  Ready 2 Ride   Systems are GO");
         }
     }
 }
